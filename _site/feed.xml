@@ -3,7 +3,7 @@
   <title>News 'n' Updates | Blog</title>
   <link href="http://localhost:4000/feed.xml" rel="self"/>
   <link href="http://localhost:4000/"/>
-  <updated>2016-11-16T02:40:01-08:00</updated>
+  <updated>2016-11-16T12:31:59-08:00</updated>
   <id>http://localhost:4000/</id>
   <author>
     <name>George Lydakis</name>
@@ -18,7 +18,7 @@
     <id>http://localhost:4000/complex-python-lambdas</id>
     <content type="html">&lt;p&gt;As part of the 2nd programming assignment of CSCI 561 AI class, we had to program AI agents that implement either the &lt;a href=&quot;https://en.wikipedia.org/wiki/Minimax&quot;&gt;Mimimax&lt;/a&gt; or &lt;a href=&quot;https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning&quot;&gt;Alpha-Beta Pruning&lt;/a&gt; algorithms to play a fictional board game. Using these algorithms, the agents would essentially generate a series of possible actions, calculate the utility of the board when each action is applied, and somehow choose the best action.  &lt;!-- more --&gt;&lt;/p&gt;
 
-&lt;p&gt;Simplifying things, an action is a function that manipulates the board so that it places the player’s piece on an empty square. In other words, a function that takes a board configuration as input and outputs a board with the player’s move applied. The agent needs to generate all the possible actions in any given moment and choose the one that’s best for him. From an abstraction standpoint, it would make sense to use lambda functions to implement the actions.&lt;/p&gt;
+&lt;p&gt;Simplifying things, an action is a function that manipulates the board so that it places the player’s piece on an empty square. In other words, a function that takes a board configuration as input and outputs a board with the player’s move applied. The agent needs to generate all possible actions in any given moment and choose the one that’s best for him. From an abstraction standpoint, it would make sense to use lambda functions to implement the actions.&lt;/p&gt;
 
 &lt;p&gt;Lambda functions are what we call anonymous functions, i.e., functions that are not bound to a name. Python has a very powerful implementation of lambdas and you’d normally see it used in conjunction with typical functional concepts like &lt;code class=&quot;highlighter-rouge&quot;&gt;filter()&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;map()&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;reduce()&lt;/code&gt;. For example:&lt;/p&gt;
 
@@ -52,7 +52,7 @@
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;What is not evident at first, is that while generating the list &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt; is being assigned to each value of the second list—we can use a list comprehension do assignments inside lambdas! So we can do this:&lt;/p&gt;
+&lt;p&gt;What is not evident at first, is that while generating the list, &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt; is being assigned to each value of the second list—we can use a list comprehension do assignments inside lambdas! So we can do this:&lt;/p&gt;
 
 &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; [None for b[x, y].status in [player]] 
 [None]
