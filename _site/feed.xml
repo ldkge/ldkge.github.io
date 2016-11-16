@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>News 'n' Updates | Blog</title>
+  <link href="http://localhost:4000/feed.xml" rel="self"/>
+  <link href="http://localhost:4000/"/>
+  <updated>2016-11-16T02:20:35-08:00</updated>
+  <id>http://localhost:4000/</id>
+  <author>
+    <name>George Lydakis</name>
+  </author>
+  <generator>Jekyll v3.3.0</generator>
+
+  
+  <entry>
+    <title>Complex Python lambdas</title>
+    <link href="http://localhost:4000/complex-python-lambdas.html"/>
+    <updated>2016-11-15T00:00:00-08:00</updated>
+    <id>http://localhost:4000/complex-python-lambdas</id>
+    <content type="html">&lt;p&gt;As part of the 2nd programming assignment of CSCI 561 AI class, we had to program AI agents that implement either the &lt;a href=&quot;https://en.wikipedia.org/wiki/Minimax&quot;&gt;Mimimax&lt;/a&gt; or &lt;a href=&quot;https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning&quot;&gt;Alpha-Beta Pruning&lt;/a&gt; algorithms to play a fictional board game. Using these algorithms, the agents would essentially generate a series of possible actions, calculate the utility of the board when each action is applied, and somehow choose the best action.  &lt;!-- more --&gt;&lt;/p&gt;
+
+&lt;p&gt;Simplifying things, an action is a function that manipulates the board so that it places the player’s piece on an empty square. In other words, a function that takes a board configuration as input and outputs a board with the player’s move applied. The agent needs to generate all the possible actions in any given moment and choose the one that’s best for him. From an abstraction standpoint, it would make sense to use lambda functions to implement the actions.&lt;/p&gt;
+
+&lt;p&gt;Lambda functions are what we call anonymous functions, i.e., functions that are not bound to a name. Python has a very powerful implementation of lambdas and you’d normally see it used in conjunction with typical functional concepts like &lt;code class=&quot;highlighter-rouge&quot;&gt;filter()&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;map()&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;reduce()&lt;/code&gt;. For example:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; a = [1, 2, 3, 4]
+&amp;gt;&amp;gt;&amp;gt; b = map(lambda x: x**2, a)
+&amp;gt;&amp;gt;&amp;gt; b
+[1, 4, 9, 16]
+&amp;gt;&amp;gt;&amp;gt; k = 5
+&amp;gt;&amp;gt;&amp;gt; c = map(lambda x, offset=k: x + offset, a)
+&amp;gt;&amp;gt;&amp;gt; c
+[6, 7, 8, 9]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;As you can see when we define a lambda we specify the arguments—be that inputs or captured variables from the current scope—and a return function. The function part is usually a one-line data manipulation that is immediately returned.&lt;/p&gt;
+
+&lt;p&gt;In our case we want to do more complicated things. First, our function has to do an assignment; we need to assign the player’s piece, say ‘X’, to a square in the board. Secondly, we have to create such lambda for every possible action. The latter is easier. Given that we know all the valid positions  we can place our piece on, we can loop through them in a list comprehension and produce a list of lambdas:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;def actions(board):
+	return [lambda b, x=x, y=y, player=board.turn: **magic**
+		for (x, y) in possible_moves(board)]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;For every coordinate &lt;code class=&quot;highlighter-rouge&quot;&gt;x, y&lt;/code&gt; that is square of a possible move, we are generating a lambda that takes a board &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt;, somehow assigns the player’s piece to that square, and returns the modified board. But how are we going to implement this assignment?&lt;/p&gt;
+
+&lt;p&gt;In Python we can’t immediately do assignments inside a lambda—but there’s a trick. We’ve already used a list comprehension; with it one can populate a list using another one. For example:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; a = [x**2 for x in [1, 2, 3, 4]]
+[1, 4, 9, 16]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;What is not evident at first, is that while generating the list &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;x&lt;/code&gt; is being assigned to each value of the second list—we can use a list comprehension do assignments inside lambdas! So we can do this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; [None for b[x, y].status in [player]] 
+[None]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The above will generate a list with just one &lt;code class=&quot;highlighter-rouge&quot;&gt;None&lt;/code&gt; element, but in doing so it will assign the variable &lt;code class=&quot;highlighter-rouge&quot;&gt;player&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;b[x, y].status&lt;/code&gt;. Finally, we said we need to return the modified board. Simple, just put the whole board as the last element in our list and return it!&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;gt;&amp;gt;&amp;gt; [[None for b[x, y].status in [player]], b]
+[[None], &amp;lt;__main__.Board object at 0x10801fc50&amp;gt;]
+&amp;gt;&amp;gt;&amp;gt; [[None for b[x, y].status in [player]], b][-1]
+&amp;lt;__main__.Board object at 0x10801fc50&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;With that our &lt;code class=&quot;highlighter-rouge&quot;&gt;actions&lt;/code&gt; function becomes:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;def actions(board):
+	return [lambda b, x=x, y=y, player=board.turn: 
+			[[None for b[x, y].status in [player]], b][-1]
+		for (x, y) in possible_moves(board)]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This function creates a list of lambda functions, each of which gets as input a board &lt;code class=&quot;highlighter-rouge&quot;&gt;b&lt;/code&gt;, assigns the player’s piece to the specified &lt;code class=&quot;highlighter-rouge&quot;&gt;x, y&lt;/code&gt; square using the list comprehension, and returns the modified board by putting it as an element in the list and accessing it through the subscript—exactly what we wanted.&lt;/p&gt;
+
+&lt;p&gt;This is a very powerful way to write lambdas. Using this method you can implement anything you want. To take it to an extreme, you could even have your whole program inside a lambda!&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;(lambda: [
+    ['def'
+        for sys in [__import__('sys')]
+        for math in [__import__('math')]
+
+        for sub in [lambda *vals: None]
+        for fun in [lambda *vals: vals[-1]]
+
+        for echo in [lambda *vals: sub(
+            sys.stdout.write(u&quot; &quot;.join(map(unicode, vals)) + u&quot;\n&quot;))]
+
+        for Cylinder in [type('Cylinder', (object,), dict(
+            __init__ = lambda self, radius, height: sub(
+                setattr(self, 'radius', radius),
+                setattr(self, 'height', height)),
+
+            volume = property(lambda self: fun(
+                ['def' for top_area in [math.pi * self.radius ** 2]],
+
+                self.height * top_area))))]
+
+        for main in [lambda: sub(
+            ['loop' for factor in [1, 2, 3] if sub(
+                ['def'
+                    for my_radius, my_height in [[10 * factor, 20 * factor]]
+                    for my_cylinder in [Cylinder(my_radius, my_height)]],
+
+                echo(u&quot;A cylinder with a radius of %.1fcm and a height &quot;
+                     u&quot;of %.1fcm has a volume of %.1fcm³.&quot;
+                     % (my_radius, my_height, my_cylinder.volume)))])]],
+
+    main()])()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;But please, don’t do that.&lt;/p&gt;
+</content>
+  </entry>
+  
+</feed>
